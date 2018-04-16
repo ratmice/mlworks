@@ -60,7 +60,7 @@ structure Batch : BATCH =
 
       | runFiles (file::rest) =
 
-        if OS.Process.system (file) = OS.Process.success then
+        if OS.Process.isSuccess(OS.Process.system (file)) then
 	  (* Register a message noting success to report later. *)
           (OS.Process.atExit 
 	   (fn () => print (file ^ " executed sucessfully.\n"));
