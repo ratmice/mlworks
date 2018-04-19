@@ -138,6 +138,7 @@ structure Version_ : VERSION =
     (* constructors must kept consistent with those in rts/sha/mlw_mklic.h *)
     (* and in alphabetical order *)
 
+    (* Since open-sourcing MLWorks, the only edition is PROFESSIONAL *)
     datatype edition = ENTERPRISE | PERSONAL | PROFESSIONAL
 
     fun edition () = PROFESSIONAL
