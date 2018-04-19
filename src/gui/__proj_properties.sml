@@ -81,6 +81,7 @@ require "../main/__project";
 require "../winsys/__capi";
 require "../winsys/__menus";
 require "../interpreter/__incremental";
+require "../interpreter/__shell_utils";
 require "../basics/__module_id";
 
 require "_proj_properties";
@@ -97,5 +98,6 @@ structure ProjProperties_ =
     structure Menus = Menus_
     structure OS = OS
     structure Incremental = Incremental_
+    structure ShellUtils = ShellUtils_ 
     structure ModuleId = ModuleId_
   );

@@ -1089,6 +1089,9 @@ INTERSRC1 =	basis/__int32 \
 		interpreter/user_context \
 		interpreter/_user_context \
 		interpreter/__user_context \
+		interpreter/user_hooks \
+		interpreter/_user_hooks \
+		interpreter/__user_hooks \
 		interpreter/shell_types \
 		interpreter/_shell_types \
 		interpreter/__shell_types \

@@ -259,6 +259,7 @@ require "../main/proj_file";
 require "../main/project";
 
 require "../interpreter/incremental";
+require "../interpreter/shell_utils";
 
 require "capi";
 require "menus";
@@ -276,6 +277,7 @@ functor ProjProperties (
   structure Incremental: INCREMENTAL
   structure ModuleId: MODULE_ID
   structure Project: PROJECT
+  structure ShellUtils: SHELL_UTILS
 
   sharing type Capi.Widget = Menus.Widget
   sharing type Info.Location.T = ProjFile.location = ModuleId.Location
@@ -427,8 +429,7 @@ struct
            let val selected_proj = OS.Path.mkCanonical (hd(valOf(files)))
                fun find [] = []
                  | find (h::t) = if h = selected_proj then t else find t
-            in ProjFile.open_proj selected_proj;
-               Incremental.reset_project();
+            in ShellUtils.open_project selected_proj;
                proj_stack := find (!proj_stack) 
            end
              handle ProjFile.InvalidProjectFile s => 
