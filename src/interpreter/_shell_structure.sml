@@ -844,6 +844,7 @@ require "inspector_values";
 require "incremental";
 require "shell_types";
 require "user_context";
+require "user_hooks";
 require "../main/user_options";
 require "../main/preferences";
 require "../main/proj_file";
@@ -876,6 +877,7 @@ functor ShellStructure (
   structure Preferences : PREFERENCES
   structure ShellTypes: SHELL_TYPES
   structure UserContext: USER_CONTEXT
+  structure UserHooks: USER_HOOKS
   structure Inspector : INSPECTOR
   structure InspectorValues : INSPECTOR_VALUES
   structure Incremental: INCREMENTAL
@@ -1046,14 +1048,14 @@ functor ShellStructure (
 
         (* This won't quite work with abstypes, maybe *)
 
-	fun get_runtime_type(longtycon as Ident.LONGTYCON(_, Ident.TYCON sy)) =
+	fun get_runtime_type(ts, longtycon as Ident.LONGTYCON(_, Ident.TYCON sy)) =
 	  let
 	    val Incremental.CONTEXT
 	      {compiler_basis=Compiler.BASIS
 	       {type_basis=BasisTypes.BASIS{5=env, ...}, ...}, ...} = initial_context
 	    val TYSTR(tyfun, valenv) = Env.lookup_longtycon (longtycon,env)
 	  in
-	    CONSTYPE([], METATYNAME(ref tyfun, Symbol.symbol_name sy, 0,
+	    CONSTYPE(ts, METATYNAME(ref tyfun, Symbol.symbol_name sy, 0,
 				    ref(Types.equalityp tyfun), ref valenv, ref false))
 	  end
 
@@ -2421,12 +2423,10 @@ functor ShellStructure (
              a_LIBRARY = ProjFile.LIBRARY : ProjFile.target_type,
              *)
              a_ProjectError = project_exn : internal_exn_rep,
-             a_openProject =
-	       (fn file => (ProjFile.open_proj file; 
-			    Incremental.reset_project();
-			    refresh_project())
+             a_openProject = (fn file =>
+		  ShellUtils.open_project file
                   handle _ => env_error (project_exn, "Unable to open project file " ^ file)
-               ): string -> unit,
+               ) : string -> unit,
 	     a_newProject =
 	       (fn dir => 
                   let val abs_dir = OS.Path.mkAbsolute{path=dir, relativeTo=OS.FileSys.getDir()}
@@ -2951,9 +2951,9 @@ functor ShellStructure (
 					    "Profile"],
 					   "profile")
 
-	  val profile_options_type = get_runtime_type profile_options_tycon
+	  val profile_options_type = get_runtime_type ([], profile_options_tycon)
 
-	  val profile_type = get_runtime_type profile_tycon
+	  val profile_type = get_runtime_type ([], profile_tycon)
 
 	  (* profile has type ('a -> 'b) -> 'a -> 'b
 	   * full has type options -> ('a -> 'b) -> 'a -> 'b *)
@@ -3067,7 +3067,7 @@ functor ShellStructure (
 					  "Types"],
 					 "time")
 
-	  val time_type = get_runtime_type time_tycon
+	  val time_type = get_runtime_type ([], time_tycon)
 
 	  val cpu_time_type = mk_record[("usr", time_type),
 					("sys", time_type)]
@@ -3154,7 +3154,26 @@ functor ShellStructure (
 					     name: string,
 					     function: ('a -> 'b)} -> 'a -> 'b}
 	end
-	
+
+	val open_project_hook_t = FUNTYPE(Types.string_type, Types.empty_rectype);
+	val basis_option_tycon = mk_longtycon (["MLWorks", "Internal", "Types"], "option");
+	val hook_option_t = get_runtime_type ([open_project_hook_t], basis_option_tycon);
+
+	val open_project_hook_fun_t = TYFUN(open_project_hook_t, 0);
+	val hooks_structure = mk_mixed_structure 
+	  ([]
+	  ,[("open_project_hook_t", TYSTR(open_project_hook_fun_t, empty_valenv))]
+	  ,[("didOpenProjectHook", schemify (FUNTYPE(Types.empty_rectype,
+					             hook_option_t)))
+	   ,("setDidOpenProjectHook", schemify (FUNTYPE(hook_option_t,
+					                Types.empty_rectype)))]
+	  ,[]);
+
+        val hooks_record =
+            cast
+            {a_didOpenProjectHook = UserHooks.didOpenProjectHook : unit -> (string -> unit) option,
+             a_setDidOpenProjectHook = UserHooks.setDidOpenProjectHook : (string -> unit) option -> unit};
+
         (* make the context itself *)
         val context =
           #1(Incremental.add_value
@@ -3192,7 +3211,8 @@ functor ShellStructure (
                    ("Dynamic",dynamic_structure),
                    ("Inspector",inspector_structure),
 		   ("Timer", timer_structure),
-		   ("Profile", profile_structure)
+		   ("Profile", profile_structure),
+		   ("Hooks", hooks_structure)
 		   ],
 		  [],
 		  [("exit", int_to_unit),
@@ -3231,7 +3251,8 @@ functor ShellStructure (
 		   c_editor = editor_record,
 		   c_options = options_record,
 		   c_timer = timer_record,
-		   c_profile = profile_record
+		   c_profile = profile_record,
+		   c_hooks = hooks_record
 		 })
         in
           val context = context'

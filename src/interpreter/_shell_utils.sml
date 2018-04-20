@@ -561,6 +561,7 @@ require "../basics/module_id";
 require "incremental";
 require "shell_types";
 require "user_context";
+require "user_hooks";
 require "../parser/parser";
 require "../typechecker/types";
 require "../typechecker/basis";
@@ -607,6 +608,7 @@ functor ShellUtils
    structure Preferences : PREFERENCES
    structure UserOptions : USER_OPTIONS
    structure UserContext : USER_CONTEXT
+   structure UserHooks : USER_HOOKS
    structure ShellTypes : SHELL_TYPES
 
    sharing Incremental.InterMake.Compiler.Options = UserOptions.Options =
@@ -1301,6 +1303,17 @@ struct
            (fn s => output_fn (" " ^ s ^ "\n"))
             filelist)
     end
+
+    fun refresh_project () = Incremental.set_project(Incremental.get_project());
+
+    fun open_project file = (
+	ProjFile.open_proj file;
+        Incremental.reset_project();
+        refresh_project();
+        (case UserHooks.didOpenProjectHook() of
+              SOME f => f (file)
+            | NONE   => ())
+    )
 
   (* Much of this code is taken from TopLevel.build.  The differences
      are:  the initial project, and what to do at the end. *)

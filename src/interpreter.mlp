@@ -1,9 +1,9 @@
 MLWorks 2.0
-c:\ml\mlw\src\interpreter.mlp.new 146 7
+c:\ml\mlw\src\interpreter.mlp.new 149 7
   AboutInfo 2 2
     Version 0 0
     Description 0 0
-  Files 70 0
+  Files 73 0
     interpreter/interpreter_export_filter.sml
     main/stack_interface.sml
     main/__preferences.sml
@@ -41,6 +41,7 @@ c:\ml\mlw\src\interpreter.mlp.new 146 7
     interpreter/__shell_utils.sml
     interpreter/__tty_listener.sml
     interpreter/__user_context.sml
+    interpreter/__user_hooks.sml
     interpreter/_incremental.sml
     interpreter/_inspector.sml
     interpreter/_inspector_values.sml
@@ -55,6 +56,7 @@ c:\ml\mlw\src\interpreter.mlp.new 146 7
     interpreter/_shell_utils.sml
     interpreter/_tty_listener.sml
     interpreter/_user_context.sml
+    interpreter/_user_hooks.sml
     interpreter/incremental.sml
     interpreter/inspector.sml
     interpreter/inspector_values.sml
@@ -70,6 +72,7 @@ c:\ml\mlw\src\interpreter.mlp.new 146 7
     interpreter/shell_utils.sml
     interpreter/tty_listener.sml
     interpreter/user_context.sml
+    interpreter/user_hooks.sml
     editor/__custom.sml
     editor/_custom.sml
     editor/custom.sml

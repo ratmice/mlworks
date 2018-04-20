@@ -171,6 +171,7 @@ require "__inspector_values";
 require "__incremental";
 require "__shell_types";
 require "__user_context";
+require "__user_hooks";
 require "../main/__user_options";
 require "../main/__preferences";
 require "__save_image";
@@ -206,6 +207,7 @@ structure ShellStructure_ =
     structure ShellTypes = ShellTypes_
     structure UserContext = UserContext_
     structure UserOptions = UserOptions_
+    structure UserHooks = UserHooks_
     structure Preferences = Preferences_
     structure SaveImage = SaveImage_
     structure ShellUtils = ShellUtils_

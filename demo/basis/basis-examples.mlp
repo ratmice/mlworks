@@ -42,7 +42,7 @@ MLWorks 2.0
     __binary.sml
     __batch.sml
   Subprojects 1 0
-    ../../basis/basis.mlp
+    ../../basis.mlp
   Targets 31 1
     Details 15 0
       __binary.sml OBJECT_FILE

@@ -11,7 +11,7 @@ motif-examples.mlp 47 7
     forms.sml
   Subprojects 2 0
     ../../motif/gui.mlp
-    ../../basis/basis.mlp
+    ../../basis.mlp
   Targets 7 1
     Details 3 0
       tetris.sml OBJECT_FILE

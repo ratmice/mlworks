@@ -1,0 +1,89 @@
+Name:		{{{ git_name }}}	
+Version:	{{{ git_version }}}	
+Release:	3%{?dist}
+Summary:	mlworks messy bootstrap from an amalgamation of branches
+Group:		Development/Languages
+License:	BSD
+URL:		https://www.ravenbrook.com/project/mlworks/
+VCS:		{{{ git_vcs }}}
+Source:		{{{ git_pack }}}
+
+BuildRequires:	gcc elfutils-libelf-devel smlnj
+BuildRequires:  motif-devel libX11-devel libXpm-devel libXext-devel
+BuildRequires: /usr/include/gnu/stubs-32.h
+BuildRequires: /lib/libgcc_s.so.1
+Requires:	motif elfutils-libelf libX11 libXpm libXext	
+
+%description
+work in progress
+# Not sure how to deal with architecture yet,
+# hard codes i386, needs to uppercase arch to I386.
+%prep
+{{{ git_setup_macro }}}
+cd src
+ln -s i386/ machine
+ln -s unix/ system
+ln -s ../system/_os.sml main/
+ln -s ../system/__os.sml main/
+
+%build
+cd src
+make -C rts/ ARCH=I386 OS=Linux
+sml <make/smlnj-boot.sml
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 batch.img
+LD_LIBRARY_PATH=rts/bin/I386/Linux/ rts/bin/I386/Linux/main-g -MLWpass xx -load images/I386/Linux/batch.img xx -pervasive-dir pervasive/ -project xinterpreter.mlp -configuration I386/Linux -target xinterpreter.sml -build
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 guib.img
+LD_LIBRARY_PATH=rts/bin/I386/Linux/ rts/bin/I386/Linux/main-g -MLWpass xx -load images/I386/Linux/batch.img xx -pervasive-dir pervasive/ -project interpreter.mlp -configuration I386/Linux -target interpreter.sml -build
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 tty.img
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 gui.img
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 ttyb.img
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 basis.img
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 pervasive.img
+make %{?_smp_mflags} -C images/I386/Linux/ OS=Linux ARCH=I386 shell.img
+make -C images/I386/Linux/ OS=Linux ARCH=I386 xm.img
+make -C images/I386/Linux/ OS=Linux ARCH=I386 foreign.img
+
+%install
+cd src/
+mkdir -p %{buildroot}/usr/lib/
+mkdir -p %{buildroot}/opt/mlworks/{basis,motif,utils,foreign,unix}
+mkdir -p %{buildroot}/%{_bindir}
+mkdir -p %{buildroot}/opt/mlworks/images/
+mkdir -p %{buildroot}/opt/mlworks/objects/Release/
+mkdir -p %{buildroot}/%{_datadir}/X11/app-defaults
+mkdir -p %{buildroot}/opt/mlworks/pervasive/DEPEND
+
+install -t %{buildroot}/opt/mlworks/images/ images/I386/Linux/*.img
+install -t %{buildroot}/opt/mlworks/unix unix/*.sml
+install -t %{buildroot}/opt/mlworks/basis basis/*.sml
+install -t %{buildroot}/opt/mlworks/ basis.mlp
+install -t %{buildroot}/opt/mlworks/motif motif/*.{mlp,sml}
+install -t %{buildroot}/opt/mlworks/utils utils/*.{mlp,sml}
+cp -r foreign %{buildroot}/opt/mlworks/
+install -t %{buildroot}/opt/mlworks/objects/Release ../objects/I386/Linux/Release/*.mo
+install -t %{buildroot}/opt/mlworks/pervasive/DEPEND pervasive/DEPEND/*
+install -t %{buildroot}/opt/mlworks/pervasive/ pervasive/*.mo
+
+install -t %{buildroot}/usr/lib/ rts/bin/I386/Linux/*.so
+for i in rts/bin/I386/Linux/*;
+ do if [ -n $(basename $i | grep -v 'libml') ]; then 
+	install -T $i %{buildroot}/%{_bindir}/mlworks-$(basename $i);
+    fi
+ done
+install -t %{buildroot}/%{_datadir}/X11/app-defaults/	app-defaults/{MLWorks-color,MLWorks-normal-fonts,MLWorks-demo-fonts,MLWorks-proj-fonts,MLWorks-labels,MLWorks-mono}
+
+cd ..
+cp -r demo/ %{buildroot}/opt/mlworks/
+cd %{buildroot}/opt/mlworks/
+ln -sf unix system
+
+%files
+%{_bindir}/mlworks-*
+/usr/lib/libml*.so
+%{_datadir}/X11/app-defaults/*
+/opt/mlworks/
+%doc
+
+%changelog
+* Thu Apr 12 2018 Matt Rice <ratmice@gmail.com> - messy_copr-3
+- initial attempt

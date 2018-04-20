@@ -85,8 +85,9 @@ structure FileFind : FILE_FIND =
       case (OS.FileSys.readDir dir) of
 
 	(* If at end of directory then return an empty list. *)
-	"" => []
-      | file =>
+        NONE => []
+      | SOME "" => []
+      | SOME file =>
 	  
 	  (* If file is a child directory then it must be searched as well. *)
 	  if isChildDir file then

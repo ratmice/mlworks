@@ -6,7 +6,7 @@ c:\ml\mlw\demo\demos.mlp 51 7
   Files 1 0
     c:/ml/mlw/demo/btree.sml
   Subprojects 1 0
-    ../src/basis.mlp
+    ../basis.mlp
   Targets 3 1
     Details 1 0
       btree.sml OBJECT_FILE

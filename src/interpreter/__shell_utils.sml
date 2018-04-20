@@ -148,6 +148,7 @@ require "../rts/gen/__tags";
 require "__incremental";
 require "__user_context";
 require "__shell_types";
+require "__user_hooks";
 require "../system/__os";
 require "../system/__getenv";
 require "../basics/__module_id";
@@ -177,6 +178,7 @@ structure ShellUtils_ = ShellUtils (
   structure Tags = Tags_
   structure Incremental = Incremental_
   structure UserContext = UserContext_
+  structure UserHooks = UserHooks_
   structure ShellTypes = ShellTypes_
   structure Getenv = Getenv_
   structure OS = OS

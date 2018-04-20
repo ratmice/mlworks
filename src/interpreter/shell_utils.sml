@@ -309,6 +309,7 @@ signature SHELL_UTILS =
       Info.options -> string ->
       unit
 
+    val open_project : string -> unit;
 
     (* Compile/load targets *)
 

@@ -12,7 +12,7 @@ threads-examples.mlp 52 7
     readers_writers.sml
     sleeping_barber.sml
   Subprojects 1 0
-    ../../basis/basis.mlp
+    ../../basis.mlp
   Targets 11 1
     Details 5 0
       sleeping_barber.sml OBJECT_FILE
