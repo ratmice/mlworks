@@ -18,7 +18,7 @@ cub.mlp 61 7
     ../../../src/foreign/mlworks_dynamic_library.sml
     __cub.sml
   Subprojects 1 0
-    ../../../src/basis.mlp
+    ../../../basis.mlp
   Targets 5 1
     Details 2 0
       __mlworks_c_interface.sml OBJECT_FILE

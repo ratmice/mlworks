@@ -7,7 +7,7 @@ capi-motif.mlp 40 7
     motif/__capi.sml
     capi.sml
   Subprojects 2 0
-    ../../basis/basis.mlp
+    ../../basis.mlp
     ../../motif/gui.mlp
   Targets 3 1
     Details 1 0

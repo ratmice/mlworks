@@ -20,7 +20,7 @@ add.mlp 67 7
     ../../../src/foreign/mlworks_c_io.sml
     ../../../src/foreign/mlworks_c_interface.sml
   Subprojects 1 0
-    ../../../src/basis.mlp
+    ../../../basis.mlp
   Targets 5 1
     Details 2 0
       __mlworks_c_interface.sml OBJECT_FILE
